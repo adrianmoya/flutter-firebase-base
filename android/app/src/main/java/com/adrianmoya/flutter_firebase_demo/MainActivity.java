@@ -1,4 +1,4 @@
-package com.example.flutter_firebase_base;
+package com.adrianmoya.flutter_firebase_demo;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
