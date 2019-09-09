@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'login.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,7 +25,7 @@ class MyHomePage extends StatelessWidget {
         title: Text('Firebase Demo'),
       ),
       body: Center(
-        child: Text('Login'),
+        child: LoginPage(),
       ),
     );
   }
