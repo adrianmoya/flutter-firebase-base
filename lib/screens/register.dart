@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -12,6 +14,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String _email;
   String _password;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: 10,
               ),
               RaisedButton(
-                onPressed: validateAndSave,
+                onPressed: registerUser,
                 child: Text(
                   'Crear',
                   style: TextStyle(fontSize: 22),
@@ -63,11 +66,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void validateAndSave() {
+  bool validateAndSave() {
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();
-      print("Form is valid with values: $_email and $_password");
+      return true;
+    }
+    return false;
+  }
+
+  Future registerUser() async {
+    if (validateAndSave()) {
+      AuthResult authResult;
+      try {
+        authResult = await _auth.createUserWithEmailAndPassword(
+            email: _email, password: _password);
+      } on PlatformException catch (e) {
+        if (e.code == 'ERROR_WEAK_PASSWORD') {
+          print ('Password débil');
+        }
+        print(e.toString());
+      }
+      if (authResult != null) {
+        print('Se ha creado el usuario exitosamente ${authResult.user}');
+      } else {
+        print('AuthResult $authResult');
+      }
     }
   }
 
