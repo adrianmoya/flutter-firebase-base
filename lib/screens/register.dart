@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_firebase_base/model/User.dart';
+import 'package:flutter_firebase_base/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -14,11 +15,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String _email;
   String _password;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _errorEmail = '';
+  String _errorPassword = '';
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    final AuthService auth = Provider.of(context);
+    return Scaffold(
       appBar: AppBar(
         title: Text('Registro'),
       ),
@@ -26,6 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         padding: const EdgeInsets.all(10.0),
         child: Form(
           key: formKey,
+          onChanged: clearErrors,
           child: Column(
             children: [
               TextFormField(
@@ -34,6 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 validator: validateEmail,
                 onSaved: (value) => _email = value,
               ),
+              Text(_errorEmail),
               SizedBox(
                 height: 10,
               ),
@@ -44,11 +49,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 validator: validatePassword,
                 onSaved: (value) => _password = value,
               ),
+              Text(
+                _errorPassword,
+                textAlign: TextAlign.left,
+                style: TextStyle(color: Colors.red),
+              ),
               SizedBox(
                 height: 10,
               ),
               RaisedButton(
-                onPressed: registerUser,
+                onPressed: _registerUser,
                 child: Text(
                   'Crear',
                   style: TextStyle(fontSize: 22),
@@ -66,33 +76,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  bool validateAndSave() {
+  void _registerUser() async {
+    final AuthService auth = Provider.of(context);
+
+    if (_validateAndSave()) {
+      try {
+        User user =
+            await auth.createUserWithEmailAndPassword(_email, _password);
+        print('Successfuly logged as $user');
+      } catch (e) {
+        setState(() {
+          if (e.code == 'ERROR_WEAK_PASSWORD') {
+            _errorPassword = 'Password débil';
+          } else if (e.code == 'ERROR_INVALID_EMAIL') {
+            _errorEmail = 'Email inválido';
+          } else if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+            _errorEmail = 'Email en uso por otra cuenta';
+          }
+        });
+      }
+    }
+  }
+
+  void clearErrors() {
+    setState(() {
+      _errorEmail = '';
+      _errorPassword = '';
+    });
+  }
+
+  bool _validateAndSave() {
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();
       return true;
     }
     return false;
-  }
-
-  Future registerUser() async {
-    if (validateAndSave()) {
-      AuthResult authResult;
-      try {
-        authResult = await _auth.createUserWithEmailAndPassword(
-            email: _email, password: _password);
-      } on PlatformException catch (e) {
-        if (e.code == 'ERROR_WEAK_PASSWORD') {
-          print ('Password débil');
-        }
-        print(e.toString());
-      }
-      if (authResult != null) {
-        print('Se ha creado el usuario exitosamente ${authResult.user}');
-      } else {
-        print('AuthResult $authResult');
-      }
-    }
   }
 
   String validateEmail(String email) {
