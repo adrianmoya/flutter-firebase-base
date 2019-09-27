@@ -20,7 +20,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AuthService auth = Provider.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Registro'),
