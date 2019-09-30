@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_firebase_base/model/User.dart';
 import 'package:flutter_firebase_base/services/auth_service.dart';
 import 'package:flutter_firebase_base/services/firebase_auth_service.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,13 @@ List<SingleChildCloneableWidget> independentServices = [
 List<SingleChildCloneableWidget> dependentServices = [
   ProxyProvider<FirebaseAuth, AuthService>(
       builder: (context, fbauth, authService) =>
-          FirebaseAuthService(firebaseauth: fbauth))
+          FirebaseAuthService(firebaseauth: fbauth)),
+  StreamProvider<User>(
+    builder: (context) {
+      AuthService auth = Provider.of(context);
+      return auth.onAuthStateChanged;
+    },
+  )
 ];
 
 List<SingleChildCloneableWidget> uiConsumableProviders = [];

@@ -28,7 +28,7 @@ class FirebaseAuthService implements AuthService {
   Future<User> signInWithEmailAndPassword(String email, String password) async {
     final AuthResult authResult = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
-    return null;
+    return _mapToUser(authResult.user);
   }
 
   User _mapToUser(FirebaseUser fbUser) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_base/provider_setup.dart';
+import 'package:flutter_firebase_base/screens/home.dart';
 import 'package:provider/provider.dart';
 import 'screens/login.dart';
 import 'screens/register.dart';
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => LoginScreen(),
+          '/': (context) => HomeScreen(),
+          '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen()
         },
       ),
