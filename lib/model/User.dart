@@ -13,4 +13,9 @@ class User {
   final String email;
   final String photoUrl;
   final String displayName;
+
+  @override
+  String toString() {
+    return '$uid - $email';
+  }
 }
