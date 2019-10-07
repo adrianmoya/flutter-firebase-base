@@ -6,3 +6,8 @@ abstract class AuthService {
   Stream<User> get onAuthStateChanged;
   Future<void> signOut();
 }
+
+class AuthException implements Exception {
+  String cause;
+  AuthException(this.cause);
+}

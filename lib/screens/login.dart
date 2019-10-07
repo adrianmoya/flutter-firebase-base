@@ -1,81 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_base/model/User.dart';
+import 'package:flutter_firebase_base/services/auth_service.dart';
+import 'package:flutter_firebase_base/shared/auth_form.dart';
+import 'package:provider/provider.dart';
 
-class LoginScreen extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _LoginScreenState();
-  }
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final formKey = GlobalKey<FormState>();
-
-  String _email;
-  String _password;
-
+class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Acceso'),
       ),
-      body: Container(
+      body: new _LoginBody(),
+    );
+  }
+}
+
+class _LoginBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    void _loginUser(String email, String password) async {
+      final AuthService _auth = Provider.of(context);
+      try {
+        User user = await _auth.signInWithEmailAndPassword(email, password);
+        print('Successfuly registered user $user');
+      } on AuthException catch (e) {
+        final snackBar = SnackBar(content: Text(e.cause));
+        Scaffold.of(context).showSnackBar(snackBar);
+      }
+    }
+
+    return SingleChildScrollView(
+      child: Container(
         padding: const EdgeInsets.all(10.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Usuario'),
-                style: TextStyle(fontSize: 22),
-                validator: validateEmail,
-                onSaved: (value) => _email = value,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Contraseña'),
-                obscureText: true,
-                style: TextStyle(fontSize: 22),
-                validator: validatePassword,
-                onSaved: (value) => _password = value,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              RaisedButton(
-                onPressed: validateAndSave,
-                child: Text(
-                  'Acceder',
-                  style: TextStyle(fontSize: 22),
-                ),
-              ),
-              FlatButton(
-                child: Text('Registrarme', style: TextStyle(fontSize: 22)),
-                onPressed: () => Navigator.pushNamed(context, '/register'),
-              )
-            ],
-            mainAxisAlignment: MainAxisAlignment.center,
-          ),
+        child: Column(
+          children: <Widget>[
+            AuthForm(mode: AuthFormMode.login, handler: _loginUser),
+            FlatButton(
+              child: Text('Registro', style: TextStyle(fontSize: 22)),
+              onPressed: () => Navigator.pushNamed(context, '/register'),
+            )
+          ],
         ),
       ),
     );
-  }
-
-  void validateAndSave() {
-    final form = formKey.currentState;
-    if (form.validate()) {
-      form.save();
-      print("Form is valid with values: $_email and $_password");
-    }
-  }
-
-  String validateEmail(String email) {
-    return email.isEmpty ? "El email no puede estar vacío" : null;
-  }
-
-  String validatePassword(String password) {
-    return password.isEmpty ? "La contraseña no puede estar vacía" : null;
   }
 }
