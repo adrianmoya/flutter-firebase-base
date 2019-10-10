@@ -19,15 +19,15 @@ class RegisterScreen extends StatelessWidget {
 class _RegisterBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    void _registerUser(String email, String password) async {
-      final AuthService _auth = Provider.of(context);
-      try {
-        User user = await _auth.createUserWithEmailAndPassword(email, password);
-        print('Successfuly registered user $user');
-      } on AuthException catch (e) {
+    final AuthService _auth = Provider.of(context);
+
+    Future<User> _registerUser(String email, String password) async {
+      return _auth
+          .createUserWithEmailAndPassword(email, password)
+          .catchError((e) {
         final snackBar = SnackBar(content: Text(e.cause));
         Scaffold.of(context).showSnackBar(snackBar);
-      }
+      });
     }
 
     return SingleChildScrollView(
@@ -35,7 +35,7 @@ class _RegisterBody extends StatelessWidget {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: <Widget>[
-            AuthForm(mode: AuthFormMode.register, handler: _registerUser),
+            AuthForm(submitLabel: 'Registrarme', handler: _registerUser),
             FlatButton(
               child: Text('Acceder', style: TextStyle(fontSize: 22)),
               onPressed: () => Navigator.pop(context),
