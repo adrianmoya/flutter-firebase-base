@@ -44,6 +44,7 @@ class FirebaseAuthService implements AuthService {
           .signInWithEmailAndPassword(email: email, password: password);
       return _mapToUser(authResult.user);
     } catch (e) {
+      print('Error from firebase sign in call: ${e.toString()}');
       if (e.code == ('ERROR_WRONG_PASSWORD') || e.code == ('ERROR_USER_NOT_FOUND')) {
         throw AuthException('Credenciales inválidas');
       } else if (e.code == 'ERROR_INVALID_EMAIL') {
