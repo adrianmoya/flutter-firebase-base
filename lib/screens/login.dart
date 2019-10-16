@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Acceso'),
+          automaticallyImplyLeading: false,
         ),
         body: SingleChildScrollView(
             child: FutureBuilder(
