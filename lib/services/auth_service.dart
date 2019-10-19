@@ -5,6 +5,7 @@ abstract class AuthService {
   Future<User> signInWithEmailAndPassword(String email, String password);
   Stream<User> get onAuthStateChanged;
   Future<void> signOut();
+  Future<User> get currentUser;
 }
 
 class AuthException implements Exception {

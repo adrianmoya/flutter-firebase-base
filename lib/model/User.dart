@@ -16,6 +16,6 @@ class User {
 
   @override
   String toString() {
-    return '$uid - $email';
+    return '$uid - $email - $displayName - $photoUrl';
   }
 }

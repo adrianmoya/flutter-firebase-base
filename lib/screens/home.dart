@@ -1,34 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_firebase_base/model/User.dart';
 import 'package:flutter_firebase_base/services/auth_service.dart';
+import 'package:flutter_firebase_base/state/auth_state.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  HomeState createState() => HomeState();
+}
+
+class HomeState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    AuthService _auth = Provider.of(context);
+    AuthState _authState = Provider.of(context);
+
+    assert(_authState != null, 'AuthState cannot be null');
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
       ),
       body: Text('Home Page'),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Menu'),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
+      drawer: _HomeDrawer(user: _authState.currentUser),
+    );
+  }
+}
+
+class _HomeDrawer extends StatelessWidget {
+  const _HomeDrawer({
+    Key key,
+    @required User user,
+  })  : assert(user != null, 'User cannot be null'),
+        _user = user,
+        super(key: key);
+
+  final User _user;
+
+  @override
+  Widget build(BuildContext context) {
+    final _auth = Provider.of<AuthService>(context);
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          UserAccountsDrawerHeader(
+            accountEmail: _user.email != null ? Text(_user.email) : Text(''),
+            accountName: _user.displayName != null ? Text(_user.displayName) : Text(''),
+            currentAccountPicture: CircleAvatar(
+                child: _user.photoUrl != null
+                    ? Image.network(_user.photoUrl)
+                    : Text('X')),
+            decoration: BoxDecoration(
+              color: Colors.blue,
             ),
-            ListTile(
-              title: Text('Salir'),
-              onTap: () => _auth.signOut(),
-            )
-          ],
-        ),
+          ),
+          ListTile(
+            title: Text('Home'),
+            leading: Icon(Icons.home),
+          ),
+          Divider(),
+          ListTile(
+            title: Text('Salir'),
+            leading: Icon(Icons.exit_to_app),
+            onTap: () => _auth.signOut(),
+          )
+        ],
       ),
     );
   }

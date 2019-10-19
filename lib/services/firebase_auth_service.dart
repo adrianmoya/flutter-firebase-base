@@ -69,4 +69,7 @@ class FirebaseAuthService implements AuthService {
   Future<void> signOut() {
     return _auth.signOut();
   }
+
+  @override
+  Future<User> get currentUser async => _mapToUser(await _auth.currentUser());
 }
