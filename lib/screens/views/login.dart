@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_base/model/User.dart';
+import 'package:flutter_firebase_base/screens/viewmodels/login_model.dart';
 import 'package:flutter_firebase_base/services/auth_service.dart';
 import 'package:flutter_firebase_base/shared/auth_form.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    LoginModel model = Provider.of<LoginModel>(context, listen: false);
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Acceso'),
@@ -48,16 +51,6 @@ class _LoginScreenState extends State<LoginScreen> {
             return _loginForm;
           },
         )));
-  }
-
-  void _loginUser(BuildContext context, String email, String password) async {
-    final AuthService _auth = Provider.of(context);
-    setState(() {
-      _future =
-          _auth.signInWithEmailAndPassword(email, password).catchError((e) {
-        _lastError = e.cause;
-      });
-    });
   }
 }
 
