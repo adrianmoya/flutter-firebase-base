@@ -34,8 +34,10 @@ class FirebaseAuthService implements AuthService {
   }
 
   @override
-  Stream<User> get onAuthStateChanged =>
-      _auth.onAuthStateChanged.map(_mapToUser);
+  Stream<User> get onAuthStateChanged {
+    print('Got new value from Stream');
+    return _auth.onAuthStateChanged.map(_mapToUser);
+  }
 
   @override
   Future<User> signInWithEmailAndPassword(String email, String password) async {
@@ -45,7 +47,8 @@ class FirebaseAuthService implements AuthService {
       return _mapToUser(authResult.user);
     } catch (e) {
       print('Error from firebase sign in call: ${e.toString()}');
-      if (e.code == ('ERROR_WRONG_PASSWORD') || e.code == ('ERROR_USER_NOT_FOUND')) {
+      if (e.code == ('ERROR_WRONG_PASSWORD') ||
+          e.code == ('ERROR_USER_NOT_FOUND')) {
         throw AuthException('Credenciales inválidas');
       } else if (e.code == 'ERROR_INVALID_EMAIL') {
         throw AuthException('Email inválido');

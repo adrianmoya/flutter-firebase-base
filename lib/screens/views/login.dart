@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_base/model/User.dart';
-import 'package:flutter_firebase_base/screens/viewmodels/login_model.dart';
-import 'package:flutter_firebase_base/services/auth_service.dart';
-import 'package:flutter_firebase_base/shared/auth_form.dart';
+import 'package:flutter_firebase_base/screens/viewmodels/login_view_model.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -11,66 +8,73 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  Future<User> _future;
-  String _lastError;
 
   @override
   Widget build(BuildContext context) {
-    LoginModel model = Provider.of<LoginModel>(context, listen: false);
-
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Acceso'),
-          automaticallyImplyLeading: false,
-        ),
-        body: SingleChildScrollView(
-            child: FutureBuilder(
-          future: _future,
-          builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-            print('snapshot.connectionState: ${snapshot.connectionState}');
-            WidgetsBinding.instance.addPostFrameCallback((d) {
-              if (_lastError != null) {
-                final snackBar = SnackBar(content: Text(_lastError));
-                _lastError = null;
-                Scaffold.of(context).showSnackBar(snackBar);
-              }
-            });
-
-            final _loginForm = _LoginForm(
-                AuthForm(submitLabel: 'Acceder', handler: _loginUser));
-
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Stack(
-                alignment: AlignmentDirectional.center,
-                children: <Widget>[
-                  _loginForm,
-                  CircularProgressIndicator(),
-                ],
-              );
-            }
-            return _loginForm;
-          },
-        )));
-  }
-}
-
-class _LoginForm extends StatelessWidget {
-  _LoginForm(this._form);
-
-  final AuthForm _form;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10.0),
-      child: Column(
-        children: <Widget>[
-          _form,
-          FlatButton(
-            child: Text('Registro', style: TextStyle(fontSize: 22)),
-            onPressed: () => Navigator.pushNamed(context, '/register'),
-          ),
-        ],
+    return ChangeNotifierProvider<LoginViewModel>(
+      builder: (context) => LoginViewModel(Provider.of(context)),
+      child: Consumer<LoginViewModel>(
+        builder: (context, model, widget) => Scaffold(
+            appBar: AppBar(
+              title: Text('Acceso'),
+              automaticallyImplyLeading: false,
+            ),
+            body: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  children: <Widget>[
+                    Column(
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(labelText: 'Usuario'),
+                          style: TextStyle(fontSize: 22),
+                          validator: model.validateEmail,
+                          initialValue: model.email,
+                        ),
+                        Text(model.errorEmail),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextFormField(
+                          decoration:
+                              InputDecoration(labelText: 'Contraseña'),
+                          obscureText: true,
+                          style: TextStyle(fontSize: 22),
+                          validator: model.validatePassword,
+                          initialValue: model.password,
+                        ),
+                        Text(
+                          model.errorPassword,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        model.busy
+                            ? CircularProgressIndicator()
+                            : RaisedButton(
+                                onPressed: () {
+                                    model.loginUser();
+                                  },
+                                child: Text(
+                                  'Entrar',
+                                  style: TextStyle(fontSize: 22),
+                                ),
+                              ),
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                    FlatButton(
+                      child: Text('Registro', style: TextStyle(fontSize: 22)),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/register'),
+                    ),
+                  ],
+                ),
+              ),
+            )),
       ),
     );
   }

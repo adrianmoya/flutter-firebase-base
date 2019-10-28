@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_base/provider_setup.dart';
-import 'package:flutter_firebase_base/screens/authvalidation.dart';
+import 'package:flutter_firebase_base/screens/auth_validation.dart';
 import 'package:provider/provider.dart';
 import 'screens/views/login.dart';
 import 'screens/register.dart';
