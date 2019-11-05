@@ -17,7 +17,10 @@ class AuthValidation extends StatelessWidget {
         if (currentUser == null) {
           return LoginScreen();
         }
-        return HomeScreen();
+        return Provider<User>.value(
+          value: currentUser,
+          child: HomeScreen(),
+        );
       },
     );
   }

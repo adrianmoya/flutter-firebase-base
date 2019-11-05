@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Consumer<LoginViewModel>(
         builder: (context, model, widget) => Scaffold(
             appBar: AppBar(
-              title: Text('Acceso'),
+              title: Text(model.title),
               automaticallyImplyLeading: false,
             ),
             body: SingleChildScrollView(
@@ -63,11 +63,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: () {
                                     if (_formKey.currentState.validate()) {
                                       _formKey.currentState.save();
-                                      model.loginUser();
+                                      model.executeAction();
                                     }
                                   },
                                   child: Text(
-                                    'Entrar',
+                                    model.buttonLabel,
                                     style: TextStyle(fontSize: 22),
                                   ),
                                 ),
@@ -75,9 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                       ),
                       FlatButton(
-                        child: Text('Registro', style: TextStyle(fontSize: 22)),
-                        onPressed: () =>
-                            Navigator.pushNamed(context, '/register'),
+                        child: Text(model.linkLabel, style: TextStyle(fontSize: 22)),
+                        onPressed: () => model.changeMode(),
                       ),
                     ],
                   ),

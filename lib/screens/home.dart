@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_firebase_base/model/User.dart';
 import 'package:flutter_firebase_base/services/auth_service.dart';
-import 'package:flutter_firebase_base/state/auth_state.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,16 +13,14 @@ class HomeState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    AuthState _authState = Provider.of(context);
-
-    assert(_authState != null, 'AuthState cannot be null');
+    User user = Provider.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
       ),
       body: Text('Home Page'),
-      drawer: _HomeDrawer(user: _authState.currentUser),
+      drawer: _HomeDrawer(user: user),
     );
   }
 }
