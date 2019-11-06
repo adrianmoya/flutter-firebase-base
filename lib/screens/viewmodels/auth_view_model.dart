@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_firebase_base/screens/viewmodels/base_view_model.dart';
 import 'package:flutter_firebase_base/services/auth_service.dart';
 
-class LoginViewModel extends BaseViewModel {
-  LoginViewModel(this._authService);
+class AuthViewModel extends BaseViewModel {
+  AuthViewModel(this._authService);
 
   final AuthService _authService;
 
@@ -10,8 +12,6 @@ class LoginViewModel extends BaseViewModel {
 
   String email = '';
   String password = '';
-  String lastError;
-
   String errorEmail = '';
   String errorPassword = '';
 
@@ -19,7 +19,6 @@ class LoginViewModel extends BaseViewModel {
     print('Clearing form');
     email = '';
     password = '';
-    lastError = '';
     notifyListeners();
   }
 
@@ -27,7 +26,6 @@ class LoginViewModel extends BaseViewModel {
     print('Clearing errors');
     errorEmail = '';
     errorPassword = '';
-    lastError = '';
   }
 
   String validateEmail(String email) {
@@ -72,35 +70,35 @@ class LoginViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void executeAction() {
+  void executeAction(BuildContext context) {
     switch (mode) {
       case LoginViewMode.LOGIN:
-        _loginUser();
+        _loginUser(context);
         break;
       case LoginViewMode.REGISTER:
-        _register();
+        _register(context);
         break;
     }
   }
 
-  void _loginUser() async {
+  void _loginUser(BuildContext context) async {
     setBusy(true);
-    print('Loging user $email with pass $password');
     await _authService
         .signInWithEmailAndPassword(email, password)
         .catchError((e) {
-      lastError = e.cause;
+      print('Error logeando usuario: $e');
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(e.cause)));
+      setBusy(false);
     });
-    setBusy(false);
   }
 
-  void _register() async {
+  void _register(BuildContext context) async {
     setBusy(true);
-    print('Registering user $email with pass $password');
     await _authService
         .createUserWithEmailAndPassword(email, password)
         .catchError((e) {
-      lastError = e.cause;
+      print('Error creando usuario: $e');
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(e.cause)));
     });
     setBusy(false);
   }

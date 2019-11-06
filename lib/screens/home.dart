@@ -10,6 +10,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeState extends State<HomeScreen> {
+  _HomeDrawer homeDrawer;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,8 @@ class _HomeDrawer extends StatelessWidget {
         children: <Widget>[
           UserAccountsDrawerHeader(
             accountEmail: _user.email != null ? Text(_user.email) : Text(''),
-            accountName: _user.displayName != null ? Text(_user.displayName) : Text(''),
+            accountName:
+                _user.displayName != null ? Text(_user.displayName) : Text(''),
             currentAccountPicture: CircleAvatar(
                 child: _user.photoUrl != null
                     ? Image.network(_user.photoUrl)
@@ -61,7 +63,10 @@ class _HomeDrawer extends StatelessWidget {
           ListTile(
             title: Text('Salir'),
             leading: Icon(Icons.exit_to_app),
-            onTap: () => _auth.signOut(),
+            onTap: () {
+              Navigator.of(context).pop(); // Close drawer
+              _auth.signOut();
+            },
           )
         ],
       ),

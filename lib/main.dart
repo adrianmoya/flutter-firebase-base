@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_base/provider_setup.dart';
 import 'package:flutter_firebase_base/screens/auth_validation.dart';
+import 'package:flutter_firebase_base/screens/views/auth_view.dart';
 import 'package:provider/provider.dart';
-import 'screens/views/login.dart';
-import 'screens/register.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,8 +20,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => AuthValidation(),
-          '/login': (context) => LoginScreen(),
-          '/register': (context) => RegisterScreen()
+          '/auth': (context) => AuthView(),
         },
       ),
     );
